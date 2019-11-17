@@ -26,7 +26,6 @@ public class MouseHoverSelection : MonoBehaviour
 
     private void Start()
     {
-        //layerInt = LayerMask.NameToLayer("Selectable");
         layerInt = LayerMask.GetMask("Selectable");
     }
 
@@ -34,24 +33,103 @@ public class MouseHoverSelection : MonoBehaviour
     void Update()
     {
         CheckForHover();
-        //TestHover();
     }
 
     void CheckForHover()
     {
         camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(camRay.origin, camRay.direction * 10);
 
         if (Physics.Raycast(camRay, out camRayHitInfo, Mathf.Infinity,layerInt))
         {
             print("Hovered on: " + camRayHitInfo.collider.name);
-            HoveredOnSelectable(camRayHitInfo.collider.gameObject);
+            HoveredOn(camRayHitInfo.collider.gameObject);
+            if (Input.GetMouseButtonDown(0))
+            {
+                SelectObject(camRayHitInfo.collider.gameObject);
+            }
         }
         else
         {
             print("Not hovered");
             ClearHover();
+            if (Input.GetMouseButtonDown(0))
+            {
+                ClearSelection();
+            }
         }
     }
+
+    private void HoveredOn(GameObject hitObject)
+    {
+        ClearHover();
+        hoveredObject = hitObject;
+        SetColour(hitObject, hoveredColour);
+    }
+
+    void ClearHover()
+    {
+        if (hoveredObject)
+        {
+            SetColour(hoveredObject, Color.white);
+            hoveredObject = null;
+        }
+    }
+
+    void SelectObject(GameObject hoveredObject)
+    {
+        if (selectedObject)
+        {
+            ClearSelection();
+        }
+        selectedObject = hoveredObject;
+        selectedObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+    public void ClearSelection()
+    {
+        if (selectedObject)
+        {
+            selectedObject.transform.GetChild(0).gameObject.SetActive(false);
+            selectedObject = null;
+        }
+    }
+
+    void SetColour(GameObject targetObject, Color tint)
+    {
+        Renderer r = targetObject.GetComponentInChildren<Renderer>();
+        r.material.color = tint;
+    }
+
+    void DeselectAll()
+    {
+        if (selectedObject != null)
+        {
+            selectedObject = null;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     void TestHover()
     {
@@ -78,38 +156,6 @@ public class MouseHoverSelection : MonoBehaviour
         }
     }
 
-    private void HoveredOnSelectable(GameObject hitObject)
-    {
-        ClearHover();
-        SetColour(hitObject, hoveredColour);
-    }
 
-    void ClearHover()
-    {
 
-    }
-
-    void SelectObject()
-    {
-
-    }
-
-    public void ClearSelection()
-    {
-
-    }
-
-    void SetColour(GameObject targetObject, Color tint)
-    {
-        Renderer r = targetObject.GetComponentInChildren<Renderer>();
-        r.material.color = tint;
-    }
-
-    void DeselectAll()
-    {
-        if (selectedObject != null)
-        {
-            selectedObject = null;
-        }
-    }
 }
