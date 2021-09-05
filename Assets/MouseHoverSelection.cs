@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Add this to the scene on any permananent object, a GameManager or the Camera would be ideal
+//Create a LayerMask called Selectable, and add your selectable objects to it
 public class MouseHoverSelection : MonoBehaviour
 {
 
